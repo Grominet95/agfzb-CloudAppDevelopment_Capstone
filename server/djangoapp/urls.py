@@ -9,17 +9,17 @@ urlpatterns = [
     # view refers to the view function
     # name the URL
 
-    # path for about view
+    path('', views.get_dealerships, name='index'),
 
-    # path for contact us view
+    path('about/', views.about, name='about'),
+
+    path('contact/', views.contact, name='contact'),
 
     # path for registration
 
     # path for login
 
     # path for logout
-
-    path(route='', view=views.get_dealerships, name='index'),
 
     # path for dealer reviews view
 

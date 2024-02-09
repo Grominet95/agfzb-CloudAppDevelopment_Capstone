@@ -13,17 +13,12 @@ import json
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+def about(request):
+    return render(request, 'djangoapp/about.html')
 
-# Create your views here.
+def contact(request):
+    return render(request, 'djangoapp/contact.html')
 
-
-# Create an `about` view to render a static about page
-# def about(request):
-# ...
-
-
-# Create a `contact` view to return a static contact page
-#def contact(request):
 
 # Create a `login_request` view to handle sign in request
 # def login_request(request):
