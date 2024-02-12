@@ -44,27 +44,45 @@ def post_request(url, json_payload, **kwargs):
         print("Network exception occurred", str(e))
         return {"error": "Network exception occurred"}
 
-
 def get_dealers_from_cf(url, **kwargs):
     results = []
     json_result = get_request(url, **kwargs)
-    if json_result:
-        # Assuming json_result is directly a list of dealers
-        for dealer_doc in json_result:  # Iterate directly over the list
-            # Create a CarDealer object with values in `dealer_doc`
+    # Check if 'json_result' is a dictionary and contains a specific key for dealers
+    if json_result and isinstance(json_result, dict) and 'dealers' in json_result:
+        dealers = json_result['dealers']  # Adjust 'dealers' to the actual key if it's different
+        for dealer_doc in dealers:
+            # Assuming 'dealer_doc' is a dictionary with dealer information
             dealer_obj = CarDealer(
-                address=dealer_doc["address"], 
-                city=dealer_doc["city"], 
-                full_name=dealer_doc["full_name"],
-                id=dealer_doc["id"], 
-                lat=dealer_doc["lat"], 
-                long=dealer_doc["long"],
-                short_name=dealer_doc["short_name"],
-                st=dealer_doc["st"], 
-                zip=dealer_doc["zip"]
+                address=dealer_doc.get("address", ""), 
+                city=dealer_doc.get("city", ""), 
+                full_name=dealer_doc.get("full_name", ""),
+                id=dealer_doc.get("id", 0),  # Assuming 'id' is always present; adjust if necessary
+                lat=dealer_doc.get("lat", 0.0), 
+                long=dealer_doc.get("long", 0.0),
+                short_name=dealer_doc.get("short_name", ""),
+                st=dealer_doc.get("st", ""), 
+                zip=dealer_doc.get("zip", "")
             )
             results.append(dealer_obj)
+    elif json_result and isinstance(json_result, list):
+        # If 'json_result' is directly a list of dealers
+        for dealer_doc in json_result:
+            dealer_obj = CarDealer(
+                address=dealer_doc.get("address", ""), 
+                city=dealer_doc.get("city", ""), 
+                full_name=dealer_doc.get("full_name", ""),
+                id=dealer_doc.get("id", 0),
+                lat=dealer_doc.get("lat", 0.0), 
+                long=dealer_doc.get("long", 0.0),
+                short_name=dealer_doc.get("short_name", ""),
+                st=dealer_doc.get("st", ""), 
+                zip=dealer_doc.get("zip", "")
+            )
+            results.append(dealer_obj)
+    else:
+        print("Unexpected JSON structure:", json_result)
     return results
+
 
 
 def get_dealer_reviews_from_cf(url, dealerId):
