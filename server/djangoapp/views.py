@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarDealer
 from .restapis import get_dealers_from_cf
 from .restapis import post_request
+from .restapis import get_dealer_reviews_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -71,10 +72,11 @@ def get_dealerships(request):
 
 
 def get_dealer_details(request, dealer_id):
-    url = "https://b00813372-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews?id={}"
+    url = "https://b00813372-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews?id={}".format(dealer_id)
     reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
-    review_content = ' '.join([f"Review: {review.review}, Sentiment: {review.sentiment}" for review in reviews])
-    return HttpResponse(review_content)
+    context = {'reviews': reviews, 'dealer_id': dealer_id}
+    return render(request, 'djangoapp/dealer_details.html', context)
+
 
 
 @login_required

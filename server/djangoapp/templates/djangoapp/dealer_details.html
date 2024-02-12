@@ -9,9 +9,66 @@
 
     <body>
 
-    <!--Add a nav bar here -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Dealership Review</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'djangoapp:signup' %}">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                                {% csrf_token %}
+                                <input type="text" class="form-control" placeholder="Username" name="username" required>
+                                <input type="password" class="form-control" placeholder="Password" name="password" required>
+                                <button class="btn btn-primary" type="submit">Login</button>
+                            </form>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-    <!-- Add reviews as cards -->
+
+<div class="container">
+    <h2>Reviews for Dealer: {{ dealer_id.full_name }}</h2>
+    <div class="card-columns">
+        {% for review in reviews %}
+            <div class="card">
+                <img class="card-img-top" src="{{ review.sentiment|default_if_none:'' }}" alt="Sentiment">
+                <div class="card-body">
+                    <h5 class="card-title">{{ review.car_make }} {{ review.car_model }}, {{ review.car_year }}</h5>
+                    <p class="card-text">{{ review.review }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Add the Bootstrap and jQuery scripts here -->
+<!-- ... -->
+
 
     </body>
 
