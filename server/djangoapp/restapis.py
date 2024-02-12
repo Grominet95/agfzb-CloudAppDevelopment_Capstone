@@ -31,9 +31,18 @@ def get_request(url, api_key=None, **kwargs):
         return {"error": "Network exception occurred"}
 
 
-
-# Create a `post_request` to make HTTP POST requests
-# e.g., response = requests.post(url, params=kwargs, json=payload)
+def post_request(url, json_payload, **kwargs):
+    print("POST to {} with payload: {}".format(url, json_payload))
+    headers = {'Content-Type': 'application/json'}
+    try:
+        response = requests.post(url, headers=headers, json=json_payload)
+        status_code = response.status_code
+        print("With status {} ".format(status_code))
+        json_data = json.loads(response.text)
+        return json_data
+    except Exception as e:
+        print("Network exception occurred", str(e))
+        return {"error": "Network exception occurred"}
 
 
 def get_dealers_from_cf(url, **kwargs):

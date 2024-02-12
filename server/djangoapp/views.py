@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarDealer
 from .restapis import get_dealers_from_cf
+from .restapis import post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -74,7 +75,28 @@ def get_dealer_details(request, dealer_id):
     review_content = ' '.join([f"Review: {review.review}, Sentiment: {review.sentiment}" for review in reviews])
     return HttpResponse(review_content)
 
-# Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
 
+@login_required
+def add_review(request, dealer_id):
+    if request.method == 'POST':
+        review = {
+            "time": datetime.utcnow().isoformat(),
+            "dealership": dealer_id,
+            "review": request.POST.get('review', ''),
+            "purchase": request.POST.get('purchase', False),
+            "purchase_date": request.POST.get('purchase_date', None),
+            "car_make": request.POST.get('car_make', None),
+            "car_model": request.POST.get('car_model', None),
+            "car_year": request.POST.get('car_year', None),
+            "name": request.user.username
+        }
+
+        json_payload = {"review": review}
+        url = 'Your API endpoint here'  # Replace with your actual endpoint URL
+        response = post_request(url, json_payload, dealerId=dealer_id)
+
+        # Optionally, log the response or handle it as needed
+        print(response)
+        return JsonResponse(response)
+    else:
+        return JsonResponse({"error": "Method not allowed"}, status=405)

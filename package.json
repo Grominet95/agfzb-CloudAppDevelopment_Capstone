@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "cloudant": "^1.10.0-NOTICE",
+    "express": "^4.18.2"
+  }
+}
