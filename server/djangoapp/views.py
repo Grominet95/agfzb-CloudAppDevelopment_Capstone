@@ -79,6 +79,8 @@ def get_dealer_details(request, dealer_id):
 
 
 
+
+
 @login_required
 def add_review(request, dealer_id):
     if request.method == 'POST':

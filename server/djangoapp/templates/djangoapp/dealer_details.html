@@ -51,19 +51,21 @@
         </nav>
 
 
-<div class="container">
-    <h2>Reviews for Dealer: {{ dealer_id.full_name }}</h2>
-    <div class="card-columns">
-        {% for review in reviews %}
-            <div class="card">
-                <img class="card-img-top" src="{{ review.sentiment|default_if_none:'' }}" alt="Sentiment">
-                <div class="card-body">
-                    <h5 class="card-title">{{ review.car_make }} {{ review.car_model }}, {{ review.car_year }}</h5>
-                    <p class="card-text">{{ review.review }}</p>
-                </div>
+        <div class="container">
+            <h2>Reviews for Dealer: {{ dealer.full_name }}</h2> <!-- Ensure this uses the correct context variable -->
+            <div class="card-columns">
+                {% for review in reviews %}
+                    <div class="card">
+                        <img class="card-img-top" src="{% static 'images/' %}{{ review.sentiment|lower }}.png" alt="Sentiment"> <!-- Replace with your sentiment image path -->
+                        <div class="card-body">
+                            <h5 class="card-title">{{ review.car_make }} {{ review.car_model }}, {{ review.car_year }}</h5>
+                            <p class="card-text">{{ review.review }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    
 </div>
 
 <!-- Add the Bootstrap and jQuery scripts here -->

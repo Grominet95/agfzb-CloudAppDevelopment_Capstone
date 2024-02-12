@@ -84,49 +84,49 @@ def get_dealers_from_cf(url, **kwargs):
     return results
 
 
-
 def get_dealer_reviews_from_cf(url, dealerId):
     results = []
-    # Assuming your get_request function is properly set to handle parameters and API keys
     json_result = get_request(url, params={"dealerId": dealerId})
-
-    if json_result:
-        reviews = json_result.get("reviews", [])
-        for review_doc in reviews:
-            # Construct a DealerReview object for each review
-            review_obj = DealerReview(
-                dealership=review_doc.get("dealership"),
-                name=review_doc.get("name"),
-                purchase=review_doc.get("purchase"),
-                review=review_doc.get("review"),
-                purchase_date=review_doc.get("purchase_date"),
-                car_make=review_doc.get("car_make"),
-                car_model=review_doc.get("car_model"),
-                car_year=review_doc.get("car_year"),
-                sentiment="",  # This will be filled by Watson NLU
-                id=review_doc.get("id")
-            )
-
-            # Call Watson NLU to analyze the sentiment of the review's text
-            sentiment = analyze_review_sentiments(review_obj.review)
-            review_obj.sentiment = sentiment
-
-            results.append(review_obj)
+    
+    if isinstance(json_result, list):
+        for review_doc in json_result:
+            if isinstance(review_doc, dict):
+                # Use get method to handle missing keys
+                review_obj = DealerReview(
+                    dealership=review_doc.get("dealership"),
+                    name=review_doc.get("name"),
+                    purchase=review_doc.get("purchase"),
+                    review=review_doc.get("review"),
+                    purchase_date=review_doc.get("purchase_date", None),  # Provide default value if key is missing
+                    car_make=review_doc.get("car_make"),
+                    car_model=review_doc.get("car_model"),
+                    car_year=review_doc.get("car_year"),
+                    sentiment="",  # Initialize sentiment to empty string, to be filled later
+                    id=review_doc.get("id")
+                )
+                sentiment = analyze_review_sentiments(review_obj.review)
+                review_obj.sentiment = sentiment
+                results.append(review_obj)
+    else:
+        print("Unexpected JSON structure:", json_result)
 
     return results
 
 
 
+
 def analyze_review_sentiments(dealerreview):
-    url = "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/YOUR_INSTANCE_ID/v1/analyze"
+    api_key = 'Lbnu0BJSeiVgOZ1nZd72B9k8xWfHj4CPgmGcVCZYJl2M'  # Define the API key here
+    url = "https://api.eu-de.natural-language-understanding.watson.cloud.ibm.com/instances/63c00a62-4546-4dd8-8ca7-17978673d108"
     params = {
         "text": dealerreview,
         "version": "2021-08-01",
         "features": "sentiment",
         "return_analyzed_text": False
     }
-    response = get_request(url, api_key=api_key, params=params)
+    response = get_request(url, api_key=api_key, params=params)  # Pass the API key as an argument
     sentiment_result = response.get("sentiment", {}).get("document", {}).get("label", "")
     return sentiment_result
+
 
 
