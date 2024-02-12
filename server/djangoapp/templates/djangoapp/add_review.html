@@ -3,14 +3,73 @@
 <head>
     <meta charset="UTF-8">
     {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <title>Add Review</title>
+    <!-- Additional styles can be added here to match the styling of the second image -->
+    <style>
+        body {
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-control, .form-check-label {
+            margin-bottom: 10px;
+        }
+        .datepicker {
+            width: 100%;
+        }
+    </style>
 </head>
-    <body>
-    <!--Add review form here -->
-    </body>
+<body>
+    <div class="container">
+        <h2>Add a review about Sub-Ex Car Dealership</h2>
+        <form action="{% url 'djangoapp:add_review' dealer_id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="content">Enter the review content:</label>
+                <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
+            </div>
+            <div class="form-group form-check">
+                <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
+                <label class="form-check-label" for="purchasecheck">
+                    Has purchased the car from Sub-Ex Car Dealership? (select purchased car information below if checked)
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="car">Select your car (model-make-year):</label>
+                <select name="car" id="car" class="form-control">
+                    <option value="">Forester-Subaru-2021</option>
+                    {% for car in cars %}
+                    <option value="{{ car.id }}">{{ car.name }} - {{ car.car_make.name }} - {{ car.year|date:"Y" }}</option>
+                    {% endfor %}
+                </select>                
+            </div>
+            <div class="form-group">
+                <label for="purchasedate">Select Your Purchase Date:</label>
+                <input class="form-control date-own" type="text" name="purchasedate" id="purchasedate" placeholder="MM/DD/YYYY" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.date-own').datepicker({
+                format: 'mm/dd/yyyy',
+                todayHighlight: true,
+                autoclose: true,
+                clearBtn: true
+            });
+        });
+    </script>
+</body>
 </html>

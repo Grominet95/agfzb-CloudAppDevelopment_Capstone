@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 import logging
 import json
+from .models import CarMake, CarModel
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -80,16 +81,23 @@ def get_dealer_details(request, dealer_id):
 
 
 
-
 @login_required
 def add_review(request, dealer_id):
-    if request.method == 'POST':
+    if request.method == 'GET':
+        cars = CarModel.objects.filter(dealer_id=dealer_id)  # Make sure this line is correct
+        context = {
+            'dealer_id': dealer_id,
+            'cars': cars
+        }
+        return render(request, 'djangoapp/add_review.html', context)
+
+    if request.method == "POST":
         review = {
             "time": datetime.utcnow().isoformat(),
             "dealership": dealer_id,
-            "review": request.POST.get('review', ''),
-            "purchase": request.POST.get('purchase', False),
-            "purchase_date": request.POST.get('purchase_date', None),
+            "review": request.POST['content'],
+            "purchase": 'purchasecheck' in request.POST,
+            "purchase_date": request.POST['purchasedate'],
             "car_make": request.POST.get('car_make', None),
             "car_model": request.POST.get('car_model', None),
             "car_year": request.POST.get('car_year', None),
@@ -97,11 +105,6 @@ def add_review(request, dealer_id):
         }
 
         json_payload = {"review": review}
-        url = 'Your API endpoint here'  # Replace with your actual endpoint URL
-        response = post_request(url, json_payload, dealerId=dealer_id)
+        # Your logic to send this json_payload to your backend
 
-        # Optionally, log the response or handle it as needed
-        print(response)
-        return JsonResponse(response)
-    else:
-        return JsonResponse({"error": "Method not allowed"}, status=405)
+        return redirect('djangoapp:dealer_details', dealer_id=dealer_id)

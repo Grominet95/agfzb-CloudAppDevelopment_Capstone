@@ -104,8 +104,8 @@ def get_dealer_reviews_from_cf(url, dealerId):
                     sentiment="",  # Initialize sentiment to empty string, to be filled later
                     id=review_doc.get("id")
                 )
-                sentiment = analyze_review_sentiments(review_obj.review)
-                review_obj.sentiment = sentiment
+               
+                review_obj.sentiment = analyze_review_sentiments(review_obj.review)
                 results.append(review_obj)
     else:
         print("Unexpected JSON structure:", json_result)
@@ -116,17 +116,22 @@ def get_dealer_reviews_from_cf(url, dealerId):
 
 
 def analyze_review_sentiments(dealerreview):
-    api_key = 'Lbnu0BJSeiVgOZ1nZd72B9k8xWfHj4CPgmGcVCZYJl2M'  # Define the API key here
-    url = "https://api.eu-de.natural-language-understanding.watson.cloud.ibm.com/instances/63c00a62-4546-4dd8-8ca7-17978673d108"
+    api_key = 'Lbnu0BJSeiVgOZ1nZd72B9k8xWfHj4CPgmGcVCZYJl2M'  # Replace with your actual API key
+    url = "https://api.eu-de.natural-language-understanding.watson.cloud.ibm.com/instances/63c00a62-4546-4dd8-8ca7-17978673d108/v1/analyze"  # Replace with your actual endpoint
+    
     params = {
         "text": dealerreview,
         "version": "2021-08-01",
         "features": "sentiment",
         "return_analyzed_text": False
     }
-    response = get_request(url, api_key=api_key, params=params)  # Pass the API key as an argument
-    sentiment_result = response.get("sentiment", {}).get("document", {}).get("label", "")
-    return sentiment_result
 
+    response = get_request(url, api_key=api_key, params=params)
+    if 'sentiment' in response and 'document' in response['sentiment']:
+        return response['sentiment']['document']['label']
+    else:
+        # Log this case and return a default sentiment
+        print("Sentiment not found in the Watson NLU response:", response)
+        return "neutral"
 
 

@@ -52,24 +52,26 @@
 
 
         <div class="container">
-            <h2>Reviews for Dealer: {{ dealer.full_name }}</h2> <!-- Ensure this uses the correct context variable -->
+            <h2>Reviews for Dealer: {{ dealer.full_name }}</h2>
             <div class="card-columns">
                 {% for review in reviews %}
                     <div class="card">
-                        <img class="card-img-top" src="{% static 'images/' %}{{ review.sentiment|lower }}.png" alt="Sentiment"> <!-- Replace with your sentiment image path -->
+                        <!-- Update the path to match the location of sentiment images -->
+                        <img class="card-img-top" src="{% static 'media/emoji/' %}{{ review.sentiment|lower }}.png" alt="Sentiment">
                         <div class="card-body">
-                            <h5 class="card-title">{{ review.car_make }} {{ review.car_model }}, {{ review.car_year }}</h5>
+                            <h5 class="card-title">{{ review.car_make }} {{ review.car_model }}</h5>
+                            <h4 class="card-title">{{ review.car_year }}</h4>
                             <p class="card-text">{{ review.review }}</p>
+                            <!-- Display sentiment analysis result as text -->
+                            <p class="card-text">Sentiment: {{ review.sentiment }}</p>
                         </div>
                     </div>
                 {% endfor %}
             </div>
+            <a href="{% url 'djangoapp:add_review' dealer_id %}" class="btn btn-primary">Add Review</a>
         </div>
     
 </div>
-
-<!-- Add the Bootstrap and jQuery scripts here -->
-<!-- ... -->
 
 
     </body>
